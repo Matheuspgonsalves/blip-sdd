@@ -1,0 +1,25 @@
+# Este repositório versiona só o KIT (agentes, regras, templates, docs).
+# As pastas de contrato (clientes) ficam no mesmo workspace, mas fora do git.
+# Estratégia de lista permitida: tudo na raiz é ignorado, exceto o que está liberado abaixo.
+
+/*
+!/.gitignore
+!/README.md
+!/AGENTS.md
+!/.agents/
+!/_templates/
+!/docs/
+
+# Blocos padrão da empresa: material interno, fica só na máquina local
+/_templates/blocos-padrao/*
+!/_templates/blocos-padrao/README.md
+
+# Ambientes com segredos, se algum dia forem parar dentro de _templates
+**/ambientes/*.postman_environment.json
+!**/ambientes/exemplo.postman_environment.json
+
+# Lixo comum
+.DS_Store
+Thumbs.db
+node_modules/
+*.tmp.html

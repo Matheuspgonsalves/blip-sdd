@@ -1,0 +1,474 @@
+{
+  "info": {
+    "_postman_id": "bd85dda1-9b4f-4b71-a29b-6de049e9ed56",
+    "name": "WA Flows - Template",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39345969"
+  },
+  "item": [
+    {
+      "name": "1. Criar ID",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"set\",\r\n    \"type\": \"application/json\",\r\n    \"uri\": \"/whatsapp-flows\",\r\n    \"resource\": {\r\n        \"name\": \"NOME_DO_SEU_FLOW\",\r\n        \"categories\": [\"OTHER\"],\r\n        \"endpoint_uri\": \"https://seu-endpoint.com/webhook\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Listar ID Criados",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"get\",\r\n    \"uri\": \"/whatsapp-flows/\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Detalhes por ID",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"get\",\r\n    \"uri\": \"/whatsapp-flows/{{FLOW_ID}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Atualizar Nome",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"set\",\r\n    \"uri\": \"/whatsapp-flows/{{FLOW_ID}}\",\r\n    \"type\": \"application/json\",\r\n    \"resource\": {\r\n        \"name\": \"NOVO_NOME_DO_FLOW\",\r\n        \"categories\": [\"OTHER\"],\r\n        \"endpoint_uri\": \"https://seu-endpoint.com/webhook\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Inserir JSON [DRAFT]",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Transfer-Encoding",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"set\",\r\n    \"uri\": \"/whatsapp-flows/flow-json/{{FLOW_ID}}\",\r\n    \"type\": \"application/json\",\r\n    \"resource\": {\r\n        \"version\": \"7.3\",\r\n        \"data_api_version\": \"3.0\",\r\n        \"routing_model\": {\r\n            \"START_SCREEN\": []\r\n        },\r\n        \"screens\": [\r\n            {\r\n                \"id\": \"START_SCREEN\",\r\n                \"title\": \"Tela Inicial\",\r\n                \"terminal\": true,\r\n                \"data\": {},\r\n                \"layout\": {\r\n                    \"type\": \"SingleColumnLayout\",\r\n                    \"children\": [\r\n                        {\r\n                            \"type\": \"TextHeading\",\r\n                            \"text\": \"Título do Formulário\"\r\n                        },\r\n                        {\r\n                            \"type\": \"TextBody\",\r\n                            \"text\": \"Insira as informações solicitadas abaixo.\"\r\n                        },\r\n                        {\r\n                            \"type\": \"Form\",\r\n                            \"name\": \"main_form\",\r\n                            \"children\": [\r\n                                {\r\n                                    \"type\": \"TextInput\",\r\n                                    \"name\": \"campo_exemplo\",\r\n                                    \"label\": \"Exemplo de Campo\",\r\n                                    \"required\": true\r\n                                }\r\n                            ]\r\n                        },\r\n                        {\r\n                            \"type\": \"Footer\",\r\n                            \"label\": \"Enviar\",\r\n                            \"on-click-action\": {\r\n                                \"name\": \"data_exchange\",\r\n                                \"payload\": {\r\n                                    \"campo_exemplo\": \"${form.campo_exemplo}\"\r\n                                }\r\n                            }\r\n                        }\r\n                    ]\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Chave Publica Flows",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{$guid}}\",\n  \"to\": \"postmaster@wa.gw.msging.net\",\n  \"method\": \"set\",\n  \"uri\": \"/whatsapp-flows/public-key/upload\",\n  \"type\": \"application/json\",\n  \"resource\": {\n    \"business_public_key\": \"-----BEGIN PUBLIC KEY-----\\nSUA_CHAVE_PUBLICA_AQUI\\n-----END PUBLIC KEY-----\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7. Publicar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Transfer-Encoding",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"get\",\r\n    \"uri\": \"/whatsapp-flows/publish/{{FLOW_ID}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "8. Acessar JSON por ID",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"get\",\r\n    \"uri\": \"/whatsapp-flows/assets/1611976540517597\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "9. Deprecate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Transfer-Encoding",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"get\",\r\n    \"uri\": \"/whatsapp-flows/deprecate/{{FLOW_ID}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "10. Excluir [SOMENTE DRAFT]",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Transfer-Encoding",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"delete\",\r\n    \"uri\": \"/whatsapp-flows/{{FLOW_ID}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "11. Detalhes do flows",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"to\": \"postmaster@wa.gw.msging.net\",\r\n    \"method\": \"get\",\r\n    \"uri\": \"/whatsapp-flows/{{FLOW_ID}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Criação de template waba Copy",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "{{Authorization}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{$guid}}\",\n  \"to\": \"postmaster@wa.gw.msging.net\",\n  \"method\": \"set\",\n  \"uri\": \"/message-templates\",\n  \"type\": \"application/json\",\n  \"resource\": {\n    \"name\": \"nome_do_template\",\n    \"language\": \"pt_BR\",\n    \"category\": \"UTILITY\",\n    \"components\": [\n      {\n        \"type\": \"BODY\",\n        \"text\": \"Olá! Mensagem de exemplo do seu template.\"\n      },\n      {\n        \"type\": \"BUTTONS\",\n        \"buttons\": [\n          {\n            \"type\": \"URL\",\n            \"text\": \"Acessar Site\",\n            \"url\": \"https://seusite.com.br\"\n          }\n        ]\n      }\n    ]\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL_PARA_ENVIAR_COMANDOS}}",
+          "host": [
+            "{{URL_PARA_ENVIAR_COMANDOS}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "test-payloads",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"action\": \"ping\",\r\n  \"screen\": \"START_SCREEN\",\r\n  \"data\": {}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://seu-endpoint.com/test-payloads",
+          "protocol": "https",
+          "host": [
+            "seu-endpoint",
+            "com"
+          ],
+          "path": [
+            "test-payloads"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "Authorization",
+      "value": "Key SEU_TOKEN_AQUI"
+    },
+    {
+      "key": "URL_PARA_ENVIAR_COMANDOS",
+      "value": "https://http.msging.net/commands"
+    },
+    {
+      "key": "FLOW_ID",
+      "value": ""
+    }
+  ]
+}

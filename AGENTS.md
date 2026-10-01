@@ -52,7 +52,7 @@ Se a intenção combinar duas skills (ex.: corrigir um bug e depois testar), sig
 3. Toda mudança termina com uma entrada em `spec/historico/AAAA-MM-DD.md`.
 4. Segredos só em `collections/ambientes/`. Nunca escreva valor de chave em outro arquivo nem no chat.
 5. Chamadas que alteram estado (set/delete/mensagem/publish) só com confirmação do usuário.
-6. Todo JSON de fluxo segue a constituição (P-001…P-013) e passa no `blip-audit.mjs`.
+6. Todo JSON de fluxo segue a constituição (P-001…P-014) e passa no `blip-audit.mjs`.
 
 ## Scripts utilitários
 - `node .agents/skills/blip-spec-driven/scripts/blip-audit.mjs <fluxo.json>` — auditoria mecânica.

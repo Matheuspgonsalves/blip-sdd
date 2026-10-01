@@ -80,7 +80,8 @@ function botKeys(vars) {
   const names = Object.keys(vars);
   const out = [];
   for (let i = 0; i < names.length; i++) {
-    if (names[i].startsWith('key_') && !/PREENCHER/i.test(vars[names[i]])) out.push(names[i]);
+    // key_roteador é a key do roteador (igual a Authorization), não de um bot com fluxo
+    if (names[i].startsWith('key_') && names[i] !== 'key_roteador' && !/PREENCHER/i.test(vars[names[i]])) out.push(names[i]);
   }
   return out;
 }

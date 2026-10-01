@@ -21,6 +21,7 @@ Arquivo: `<CONTRATO>/collections/ambientes/prd.postman_environment.json` (copiad
 |---|---|
 | `blip_url` | `https://<contrato>.http.msging.net` |
 | `Authorization` | `Key …` do **roteador** |
+| `key_roteador` (opcional) | mesma key do roteador; o script não tenta baixar fluxo dela |
 | `key_<identificador>` | `Key …` de **cada bot** do router. `<identificador>` é o nome do bot no Blip, e vira o nome do arquivo (`key_ecovitacaptacaodev` → `prd/fluxos/ecovitacaptacaodev.json`). |
 
 Cada key só lê o próprio bot: sem a key de um bot, não dá para baixar o fluxo dele. Se faltar alguma, siga com as que existem e liste no final o que ficou faltando.

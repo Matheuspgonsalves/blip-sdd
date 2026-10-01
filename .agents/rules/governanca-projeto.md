@@ -6,7 +6,8 @@ description: Regras de organização e segurança dos contratos Blip neste works
 # Governança dos Projetos Blip
 
 ## 1. Contrato ativo
-- Cada pasta na raiz que não começa com `_` nem `.` é um **contrato** (cliente/projeto), ex.: `Acme/`, `Contoso/`.
+- Cada pasta na raiz que não começa com `_` nem `.` é um **contrato** (cliente/projeto), ex.: `Ecovita/`, `Acme/`.
+- **Exceção:** `CONTRATO/` é o modelo de onde os contratos são copiados. Nunca grave nela durante o trabalho de um cliente; ela só muda quando o usuário pedir para alterar o modelo.
 - Antes de ler ou gravar qualquer coisa de projeto, descubra o contrato ativo pela conversa (nome do cliente, do bot, arquivo citado). Se houver dúvida entre dois, **pergunte** — nunca grave no contrato errado.
 - Contrato sem pasta ainda? Use a skill `blip-novo-projeto`.
 

@@ -1,7 +1,7 @@
 ---
 name: blip-novo-projeto
 description: >-
-  Cria a pasta de um contrato/cliente Blip novo a partir de _templates/contrato (prd/, dev/, collections/, spec/) e organiza os arquivos que o usuário trouxer (JSONs exportados do Studio, Figma, recursos, collections). Use quando o usuário pedir para criar, iniciar ou montar o projeto de um cliente, começar um contrato novo, ou disser que vai trazer/importar os fluxos de produção de um router.
+  Cria a pasta de um contrato/cliente Blip novo a partir da pasta modelo CONTRATO/ (prd/, dev/, collections/, spec/) e organiza os arquivos que o usuário trouxer (JSONs exportados do Studio, Figma, recursos, collections). Use quando o usuário pedir para criar, iniciar ou montar o projeto de um cliente, começar um contrato novo, ou disser que vai trazer/importar os fluxos de produção de um router.
 ---
 
 # blip-novo-projeto
@@ -14,7 +14,7 @@ Pergunte só o que não der para inferir da mensagem:
 Se a pasta já existir, não sobrescreva nada: avise e pergunte se é para completar o que falta.
 
 ## 2. Criar a estrutura
-Copie `_templates/contrato/` inteiro para `<CONTRATO>/`. Resultado:
+Copie a pasta modelo `CONTRATO/` (raiz do workspace) inteira para `<NomeDoCliente>/`, no mesmo nível. Resultado:
 ```
 <CONTRATO>/
 ├── prd/fluxos/  prd/whatsapp-flows/  prd/RECURSOS.md

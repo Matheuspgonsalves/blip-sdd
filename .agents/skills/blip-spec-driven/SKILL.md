@@ -123,7 +123,7 @@ Use quando o usuário colocar fluxos em `prd/` e pedir "especifica esse router",
    - transbordos (filas do Desk, condições) e trackings relevantes;
    - variáveis de contexto/contato/config usadas;
    - riscos encontrados (órfãos, saídas quebradas, violações da constituição) — rode `blip-audit.mjs` em cada JSON. Em `prd/` isso é diagnóstico, não bloqueio.
-3. **Escrever `spec/ESPECIFICACAO.md`** (modelo em `_templates/contrato/spec/ESPECIFICACAO.md`): visão geral, topologia (Mermaid), uma seção por bot, integrações, configurações e recursos (nomes, sem valores secretos), pontos de atenção.
+3. **Escrever `spec/ESPECIFICACAO.md`** (modelo em `CONTRATO/spec/ESPECIFICACAO.md`): visão geral, topologia (Mermaid), uma seção por bot, integrações, configurações e recursos (nomes, sem valores secretos), pontos de atenção.
 4. Se `CONTEXTO.md` estiver vazio, rascunhe-o com o que der para inferir e marque as lacunas como perguntas para o usuário.
 5. Registre no histórico do dia.
 

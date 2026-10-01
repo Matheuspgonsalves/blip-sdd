@@ -24,18 +24,18 @@ blip-sdd/
 │       ├── blip-consultar/          ← executa requests das collections
 │       └── blip-collection/         ← cria collections para APIs do projeto
 ├── _templates/
-│   ├── contrato/             ← esqueleto de um cliente novo
 │   ├── feature/              ← spec.md, design.md, tasks.md
 │   ├── collections/          ← collections de referência (Blip geral, WhatsApp Flows)
 │   ├── blocos-padrao/        ← blocos padrão da empresa
 │   └── *.md                  ← histórico do dia, checklist, relatório de testes
-└── docs/                     ← arquitetura e decisões deste kit
+├── docs/                     ← arquitetura e decisões deste kit
+└── CONTRATO/                 ← modelo de contrato: cada cliente é uma cópia desta pasta
 ```
 
-Cada **contrato** (cliente) criado dentro do workspace fica assim e também é versionado (repositório privado), menos os segredos:
+A pasta `CONTRATO/` é o modelo. Cada cliente criado no workspace (ex.: `Ecovita/`, `Acme/`) é uma cópia dela, no mesmo nível, versionada no repositório privado, menos os segredos:
 
 ```
-Acme/
+CONTRATO/   (no workspace: Ecovita/, Acme/, …)
 ├── prd/          ← espelho do que está publicado (fluxos/, whatsapp-flows/, RECURSOS.md)
 ├── dev/          ← só o que está sendo alterado (+ _backups/ do safe-save)
 ├── collections/  ← collections do projeto + ambientes/ (chaves e tokens)

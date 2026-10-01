@@ -10,8 +10,10 @@
  *        [--var chave=valor ...] [--confirmar] [--saida resposta.json]
  *
  * Regras de segurança:
- *   - Requests de ESCRITA (command Blip com method set/merge/delete, envio em /messages ou /notifications,
- *     e qualquer POST/PUT/PATCH/DELETE fora dos commands do Blip) só rodam com --confirmar.
+ *   - BLIP É SOMENTE LEITURA: qualquer escrita na Blip (command com method set/merge/delete, envio em
+ *     /messages ou /notifications) é sempre recusada, com ou sem --confirmar. Publicar e alterar na Blip
+ *     é feito manualmente pelo usuário no portal.
+ *   - APIs do cliente: POST/PUT/PATCH/DELETE só rodam com --confirmar (alguns serviços usam POST para consulta).
  *   - Headers nunca são impressos; valores de variáveis com nome de segredo são mascarados no resumo.
  *   - Variáveis {{...}} não resolvidas abortam a execução e são listadas.
  *
@@ -105,9 +107,22 @@ export function classify(request) {
   const commandMethod = blipCommandMethod(request);
   const isCommand = url.includes('/commands') || (commandMethod !== null && blipUri(request) !== '');
   if (isCommand) {
-    return commandMethod === 'get' ? 'leitura' : 'escrita';
+    // Alguns commands da Blip usam "get" para executar uma ação (ex.: /whatsapp-flows/publish/{id}).
+    const actionUri = /\/(publish|deprecate|send|reset|change-status|transfer|close|delete|remove)(\/|\?|$)/i;
+    if (commandMethod === 'get' && !actionUri.test(blipUri(request))) return 'leitura';
+    return 'escrita';
   }
   return httpMethod === 'GET' || httpMethod === 'HEAD' ? 'leitura' : 'escrita';
+}
+
+/** A request fala com a Blip? (URL do msging.net, variáveis de URL da Blip ou corpo no formato de command/mensagem LIME) */
+export function isBlipRequest(request, resolvedUrl) {
+  const raw = rawUrl(request).toLowerCase();
+  const url = (resolvedUrl || '').toLowerCase();
+  if (raw.includes('msging.net') || url.includes('msging.net')) return true;
+  if (raw.includes('{{blip_url}}') || raw.includes('{{url_para_enviar_comandos}}')) return true;
+  const body = request.body && request.body.mode === 'raw' ? request.body.raw || '' : '';
+  return /"to"\s*:\s*"[^"]*msging\.net/.test(body) || (blipCommandMethod(request) !== null && blipUri(request) !== '');
 }
 
 // ---------- montagem da request ----------
@@ -199,13 +214,14 @@ function listEntries(entries, search) {
   const filtered = search ? findEntries(entries, search) : entries;
   for (let i = 0; i < filtered.length; i++) {
     const e = filtered[i];
-    const kind = classify(e.request) === 'leitura' ? 'L' : 'E';
+    const read = classify(e.request) === 'leitura';
+    const kind = read ? 'L' : (isBlipRequest(e.request) ? 'X' : 'E');
     const cmd = blipCommandMethod(e.request);
     const uri = blipUri(e.request);
     const target = cmd && uri ? `${cmd} ${uri}` : `${e.request.method || 'GET'} ${rawUrl(e.request)}`;
     console.log(`[${kind}] ${e.path}  →  ${target}`);
   }
-  console.log(`\n${filtered.length} request(s). [L] leitura roda direto · [E] escrita exige --confirmar`);
+  console.log(`\n${filtered.length} request(s). [L] leitura roda direto · [X] escrita na Blip: proibida · [E] escrita em API do cliente: exige --confirmar`);
 }
 
 // ---------- main ----------
@@ -269,8 +285,12 @@ async function main() {
   console.log(`▶ ${entry.path}  [${kind}]`);
   console.log(maskedSummary(built, vars));
 
+  if (kind === 'escrita' && isBlipRequest(entry.request, built.url)) {
+    console.error('\n⛔ Escrita na Blip é proibida neste workspace (somente leitura). Mostre ao usuário o que precisa mudar; ele faz manualmente no portal.');
+    process.exit(2);
+  }
   if (kind === 'escrita' && !args.confirmar) {
-    console.error('\n⛔ Request de ESCRITA não executada. Confirme com o usuário e rode de novo com --confirmar.');
+    console.error('\n⛔ Request de ESCRITA em API do cliente não executada. Confirme com o usuário e rode de novo com --confirmar.');
     process.exit(2);
   }
 

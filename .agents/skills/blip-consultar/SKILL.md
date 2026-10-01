@@ -15,7 +15,7 @@ description: >-
 ```bash
 node .agents/skills/blip-consultar/scripts/blip-request.mjs <collection.json> --listar --buscar "<termo>"
 ```
-A listagem marca `[L]` leitura e `[E]` escrita. Termos úteis na collection geral da Blip: `waiting tickets`, `online agents`, `teams metrics`, `user state`, `context variables`, `get a contact`, `message templates`, `last messages`, `ticket`.
+A listagem marca `[L]` leitura, `[X]` escrita na Blip (proibida) e `[E]` escrita em API do cliente. Termos úteis na collection geral da Blip: `waiting tickets`, `online agents`, `teams metrics`, `user state`, `context variables`, `get a contact`, `message templates`, `last messages`, `ticket`.
 
 ## 3. Executar
 ```bash
@@ -25,14 +25,15 @@ node .agents/skills/blip-consultar/scripts/blip-request.mjs <collection.json> "<
 ```
 - Variáveis que a request pede e não estão no ambiente (`identity`, `ticket_id`, `queue`…) vão por `--var`. Se você não tem o valor, pergunte.
 - Respostas grandes: use `--saida` e leia/filtre o arquivo, em vez de despejar tudo no chat.
-- **Escrita** (`[E]`): o script recusa sem `--confirmar`. Antes de usar a flag, mostre ao usuário ambiente, request, o que muda e se dá para desfazer, e espere o "sim" (governança §5). Em `prd`, sempre.
+- **Blip é somente leitura.** Requests `[X]` (set, delete, envio de mensagem, publicar/depreciar flow, etc.) nunca são executadas: o script recusa mesmo com `--confirmar`. Se o usuário pedir uma alteração na Blip, explique o que mudar e onde; ele faz no portal.
+- **API do cliente** (`[E]`): o script recusa sem `--confirmar`. Antes de usar a flag, mostre ao usuário ambiente, request, o que muda e se dá para desfazer, e espere o "sim" (governança §5).
 
 ## 4. Responder
 - Responda a pergunta, não o JSON: números, nomes, status, o que chama atenção (ex.: "12 tickets esperando na fila Hotline, o mais antigo há 47 min; 0 atendentes online nessa equipe").
 - Nunca repita chaves, tokens ou o header `Authorization`.
 - Dados pessoais de clientes finais: mostre só o necessário para a pergunta.
 - Se a consulta faz parte da investigação de um bug, entregue o achado para a skill `blip-troubleshooter`.
-- Consulta pura não precisa de entrada no histórico. Escrita executada precisa (o que foi alterado, quando, por quê).
+- Consulta pura não precisa de entrada no histórico. Escrita executada em API do cliente precisa (o que foi alterado, quando, por quê).
 
 ## Endereços úteis (commands Blip)
 | Assunto | `to` | `uri` |

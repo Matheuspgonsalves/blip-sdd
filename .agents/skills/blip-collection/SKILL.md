@@ -28,6 +28,7 @@ Valores reais **nunca** entram na collection. Só `{{variavel}}`; os valores fic
 - Commands Blip: `POST {{blip_url}}/commands`, header `Authorization: {{Authorization}}`, `Content-Type: application/json`, body com `"id": "{{$guid}}"`.
 - Nunca deixe IDs fixos onde deveria haver variável (ex.: flow id escrito no `uri` de uma request e `{{flow_id}}` na outra).
 - Corpos grandes (JSON das telas de um WhatsApp Flow) não ficam embutidos: o arquivo vive em `dev/whatsapp-flows/` e a request indica de onde copiar, na `description`.
+- A collection pode ter requests de escrita na Blip (para o usuário rodar manualmente no Postman), mas o agente nunca as executa: a Blip é somente leitura para ele.
 - Toda request tem `description` dizendo o que faz e se **altera** algo (ex.: "ESCRITA — publica o flow; não dá para despublicar, só depreciar").
 - Nomeie com número de ordem quando houver sequência (`1. Criar flow`, `2. Enviar JSON`, `3. Publicar`).
 - Scripts de teste do Postman podem salvar IDs retornados em variáveis de collection (`pm.collectionVariables.set("flow_id", …)`).

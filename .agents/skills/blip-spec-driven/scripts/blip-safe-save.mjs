@@ -13,7 +13,7 @@
  *   5. Roda blip-audit.mjs e faz rollback automático se a auditoria reprovar.
  *
  * Proteções:
- *   - Gravar dentro de uma pasta prd/ exige --permitir-prd (usado só pela skill blip-promover).
+ *   - Gravar dentro de uma pasta prd/ exige --permitir-prd (usado só pelas skills blip-promover e blip-mapear-router).
  *   - --sem-auditoria só é aceito junto com --permitir-prd (prd espelha o que foi publicado, mesmo legado).
  *   - Se o alvo ainda não existe, cria o arquivo (bot novo); em caso de auditoria reprovada, remove o arquivo criado.
  */

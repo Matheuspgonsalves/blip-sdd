@@ -114,7 +114,7 @@ Organize em ondas: (1) estrutura base, variáveis e entradas; (2) scripts e inte
 ## Modo Engenharia Reversa (projeto existente)
 Use quando o usuário colocar fluxos em `prd/` e pedir "especifica esse router", "o que esse bot faz?", ou quando `ESPECIFICACAO.md` estiver vazia.
 
-1. **Mapear a topologia**: roteador, serviços/subbots, como um chega no outro (redirects, `config`, recursos de redirect).
+1. **Mapear a topologia**: roteador, serviços/subbots, como um chega no outro (redirects, `config`, recursos de redirect). Se os JSONs ainda não estão em `prd/fluxos/`, ou se o pedido é mapear o router inteiro e associar ao Figma, siga a skill `blip-mapear-router` (ela baixa os fluxos pela API em modo leitura e usa este modo para descrever cada bot).
 2. **Por bot** (se forem muitos, um subagente por JSON, em paralelo, devolvendo o resumo no formato abaixo):
    - objetivo do bot em 1–2 frases;
    - jornada principal (caminho feliz) como lista de blocos-chave;

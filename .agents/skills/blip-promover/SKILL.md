@@ -13,7 +13,11 @@ Pergunte (se a mensagem não disser):
 - quais bots/flows foram publicados;
 - se o usuário **exportou o JSON do Studio de produção** depois de publicar (preferível) ou se publicou exatamente o arquivo de `dev/`.
 
-O ideal é sempre usar o JSON exportado do bot de produção, porque o Studio pode ter recebido ajustes manuais. Se o usuário não tiver o exportado, use o arquivo de `dev/` e registre isso no histórico ("promovido a partir de dev/, sem export de produção").
+O ideal é sempre usar a versão **publicada** de produção, porque o Studio pode ter recebido ajustes manuais. Melhor caminho: baixar direto da Blip (só leitura) com
+```bash
+node .agents/skills/blip-mapear-router/scripts/blip-router.mjs baixar --ambiente <CONTRATO>/collections/ambientes/prd.postman_environment.json --contrato <CONTRATO> --chave key_<bot>
+```
+que já grava em `prd/fluxos/` com backup (e aí os passos 3 abaixo não são necessários para esse bot). Sem key do bot no ambiente, use o JSON exportado pelo usuário; sem export, use o arquivo de `dev/` e registre isso no histórico ("promovido a partir de dev/, sem export de produção").
 
 ## 2. Atenção à diferença dev × prd
 Bots de dev e de prd são bots diferentes no Blip. Antes de copiar, compare o JSON de dev com o de prd anterior e liste ao usuário o que é **específico de ambiente** e precisa estar com o valor de produção:

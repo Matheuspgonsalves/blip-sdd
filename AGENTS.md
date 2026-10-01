@@ -35,6 +35,7 @@ Este workspace organiza projetos de chatbot na plataforma **Blip (Take Blip)** c
 | O usuário diz algo como… | Skill |
 |---|---|
 | "cria o projeto da X", "começa um contrato novo", "importei os fluxos de produção" | `blip-novo-projeto` |
+| "lista os bots do router", "baixa os fluxos de produção", "atualiza o prd pela API", "mapeia o router", "qual bot é qual Figma?" | `blip-mapear-router` |
 | "especifica esse router", "o que esse bot faz?", "preciso da spec", "vamos implementar X", "muda o menu da captação", "cria o bot de exceções" | `blip-spec-driven` |
 | dúvida ou edição pontual de bloco, condição de saída, ação, Script V2, variável do Builder | `blip-builder-json` |
 | "tá dando erro", "o bot não pediu o CPF", "ticket não caiu na fila", "por que o usuário travou?" | `blip-troubleshooter` |
@@ -51,13 +52,14 @@ Se a intenção combinar duas skills (ex.: corrigir um bug e depois testar), sig
 2. `prd/` só muda via `blip-promover`. `dev/` só muda via `blip-safe-save.mjs`.
 3. Toda mudança termina com uma entrada em `spec/historico/AAAA-MM-DD.md`.
 4. Segredos só em `collections/ambientes/`. Nunca escreva valor de chave em outro arquivo nem no chat.
-5. Chamadas que alteram estado (set/delete/mensagem/publish) só com confirmação do usuário.
+5. **A Blip é somente leitura.** Nunca envie, publique, altere ou apague nada na Blip pela API, nem se o usuário pedir: descreva a mudança e ele faz no portal. Em APIs do cliente, escrita só com confirmação.
 6. Todo JSON de fluxo segue a constituição (P-001…P-014) e passa no `blip-audit.mjs`.
 
 ## Scripts utilitários
 - `node .agents/skills/blip-spec-driven/scripts/blip-audit.mjs <fluxo.json>` — auditoria mecânica.
 - `node .agents/skills/blip-spec-driven/scripts/blip-safe-save.mjs <alvo.json> <novo.json> [--allow-delete id1,id2]` — gravação segura.
-- `node .agents/skills/blip-consultar/scripts/blip-request.mjs …` — executa uma request de collection.
+- `node .agents/skills/blip-consultar/scripts/blip-request.mjs …` — executa uma request de collection (escrita na Blip é recusada).
+- `node .agents/skills/blip-mapear-router/scripts/blip-router.mjs <descobrir|buckets|baixar|topologia> …` — lê bots e fluxos do router e grava em `prd/fluxos/`.
 - `node .agents/skills/blip-testes/scripts/gerar-pdf.mjs <arquivo.md>` — markdown → PDF.
 
 Todos rodam com Node 18+ e não têm dependências npm.

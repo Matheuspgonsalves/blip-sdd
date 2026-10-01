@@ -91,7 +91,7 @@ Quando o JSON não for suficiente para explicar o erro, acione a **Investigaçã
 2. **Execute a consulta (ou entregue o comando pronto):**
    - **Se o contrato ativo tiver `collections/ambientes/<ambiente>.postman_environment.json`:** use a skill `blip-consultar` para rodar você mesmo as consultas de leitura (`method: "get"`) e analise a resposta. Nunca imprima a chave no chat.
    - **Se não houver ambiente configurado:** entregue a requisição exata com placeholders para o usuário executar no Postman com a chave local.
-   - Comandos que alteram estado (`set`, `delete`, `merge`, reset de contexto, envio de mensagem) seguem a regra de confirmação da governança: descreva o que vai mudar e espere o "sim" do usuário.
+   - **A Blip é somente leitura para o agente.** Se o diagnóstico pedir alterar estado (resetar contexto, mudar variável, fechar ticket, reenviar mensagem), não execute: entregue ao usuário o passo exato para ele fazer manualmente no portal ou no Postman.
 
 #### Exemplos de Comandos de Inspeção Rápida:
 

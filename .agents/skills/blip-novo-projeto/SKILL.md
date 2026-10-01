@@ -45,7 +45,7 @@ Depois de organizar, rode `node .githooks/checar-segredos.mjs --todos` e mostre 
 
 ## 4. Primeiro registro
 - Crie `spec/historico/<hoje>.md` com a entrada "Projeto criado" e a lista do que foi organizado.
-- Se o projeto é **existente** e há JSONs em `prd/fluxos/`, ofereça rodar o **Modo Engenharia Reversa** da skill `blip-spec-driven` para gerar a `ESPECIFICACAO.md`.
+- Se o projeto é **existente**, ofereça a skill `blip-mapear-router`: ela baixa da Blip (só leitura) o JSON publicado de cada bot para `prd/fluxos/`, levanta a topologia e monta na `ESPECIFICACAO.md` o mapa bot × serviço × Figma. Para isso o usuário preenche `collections/ambientes/prd.postman_environment.json` com a key do roteador e uma `key_<bot>` por bot.
 - Se é **novo**, ofereça começar o `CONTEXTO.md` em conversa (objetivo, público, canais, topologia esperada).
 
 ## 5. Lembrete de ambiente

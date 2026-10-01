@@ -14,7 +14,7 @@ description: Regras de organização e segurança dos contratos Blip neste works
 ## 2. prd/ e dev/
 | Pasta | O que é | Quem altera |
 |---|---|---|
-| `prd/` | Espelho exato do que está publicado em produção (JSON exportado do Studio). | Só a skill `blip-promover`, depois que o usuário confirmar que publicou. |
+| `prd/` | Espelho exato do que está publicado em produção (JSON publicado, baixado da Blip ou exportado do Studio). | Só as skills `blip-mapear-router` (baixa a versão publicada) e `blip-promover` (depois que o usuário confirmar que publicou). |
 | `dev/` | Apenas os bots/flows que estão sendo alterados agora. | Skills `blip-spec-driven` e `blip-troubleshooter`, sempre via `blip-safe-save.mjs`. |
 
 - Para alterar um bot que só existe em `prd/`, primeiro **copie** o JSON para `dev/fluxos/` com o sufixo/nome do bot de dev, depois altere a cópia.
@@ -36,11 +36,16 @@ Nunca reescreva entradas antigas — só acrescente. Mudança estrutural (novo s
 - Se encontrar um segredo em arquivo versionável (collection, markdown, JSON de exemplo), avise o usuário e proponha mover para `ambientes/`.
 - Dados pessoais de teste (CPF, telefone, nome real) não vão para arquivos dentro de `_templates/`, `docs/` ou `.agents/`.
 
-## 5. Chamadas às APIs (collections)
-- Leitura (`"method": "get"` nos commands do Blip, `GET` em APIs do cliente) pode ser executada direto.
-- **Precisa de confirmação explícita do usuário antes de executar:** `set`, `merge`, `delete`, envio de mensagem (`/messages`), publicar/depreciar WhatsApp Flow, criar/alterar template, mudar status de ticket, resetar contexto de usuário, e qualquer `POST/PUT/PATCH/DELETE` em API do cliente.
-- Em `prd`, a confirmação é sempre obrigatória, mesmo que o usuário já tenha confirmado algo parecido antes na conversa.
-- Ao pedir confirmação, diga: ambiente, request, o que muda e se dá para desfazer.
+## 5. Chamadas às APIs
+### Blip: somente leitura, sempre
+- O agente **só consulta** a Blip: commands `get` de leitura (contextos, contatos, tickets, filas, buckets, recursos, templates, flows).
+- O agente **nunca** envia, publica, altera ou apaga nada na Blip pela API, **nem com pedido ou confirmação do usuário**: nada de `set`, `merge`, `delete`, envio em `/messages` ou `/notifications`, publicar/depreciar WhatsApp Flow, criar template, mudar ticket, resetar contexto, alterar recurso ou publicar fluxo do Builder.
+- Quando algo precisa mudar na Blip, descreva ao usuário exatamente o quê e onde (bot, tela do portal, valor). Ele faz manualmente.
+- Os scripts do kit reforçam isso: `blip-request.mjs` recusa qualquer escrita na Blip e `blip-router.mjs` só tem leitura.
+
+### APIs do cliente
+- Leitura (`GET`) pode ser executada direto.
+- `POST/PUT/PATCH/DELETE` só com confirmação explícita do usuário a cada vez (alguns serviços usam `POST` para consulta). Ao pedir, diga: ambiente, request, o que muda e se dá para desfazer. Em `prd`, a confirmação é obrigatória mesmo que algo parecido já tenha sido confirmado antes.
 
 ## 6. Convenções de arquivo
 - Datas em nome de arquivo: `AAAA-MM-DD`.

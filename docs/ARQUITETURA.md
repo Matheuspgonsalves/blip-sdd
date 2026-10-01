@@ -46,8 +46,8 @@ Registro das decisões que deram forma a este kit (outubro/2026). Cada seção d
 
 **Por quê:** cada projeto precisa de um recorte diferente da API (e das APIs do cliente), então não há uma collection padrão única. Collections exportadas do Postman costumam carregar chaves dentro do array `variable`; separar o ambiente evita que uma chave vá parar num repositório ou num print.
 
-## 9. Escrita na plataforma só com confirmação
-**Decisão:** `blip-request.mjs` executa leituras direto e recusa escrita sem `--confirmar`; as regras exigem que o agente peça o "sim" antes.
+## 9. Blip somente leitura
+**Decisão:** o agente só consulta a Blip. `blip-request.mjs` recusa qualquer escrita na Blip (set, delete, envio de mensagem, publicar/depreciar flow, inclusive commands "get" que executam ações, como `/whatsapp-flows/publish/{id}`), mesmo com `--confirmar`; `blip-router.mjs` só tem leitura. Publicar e alterar é sempre manual, pelo usuário. Em APIs do cliente, escrita continua possível com confirmação a cada vez.
 
 **Por quê:** a collection geral da Blip tem requests como "Delete all intents", e envios de mensagem chegam a clientes reais. Errar uma leitura custa nada; errar uma escrita em produção pode não ter volta.
 
@@ -60,6 +60,11 @@ Registro das decisões que deram forma a este kit (outubro/2026). Cada seção d
 **Decisão:** o repositório (privado) versiona o kit **e** as pastas de contrato. Ficam de fora só `collections/ambientes/`, `_backups/` e `_scratch/`. Um hook `pre-commit` bloqueia qualquer arquivo com chave, token ou senha escrita, e a regra P-014 proíbe credencial literal nos fluxos.
 
 **Por quê:** ter o histórico dos contratos no git é útil (diffs de fluxo, acesso de qualquer máquina). Mas repositório privado protege o acesso, não o conteúdo: um segredo commitado fica no histórico para sempre, aparece para qualquer pessoa adicionada ao repositório e precisa ser rotacionado se vazar. Nos projetos analisados havia chaves de roteador escritas em headers de ações HTTP de fluxos de produção e em collections — exatamente o que o hook e a P-014 barram.
+
+## 12. Fluxos de produção baixados pela API (só leitura)
+**Decisão:** a skill `blip-mapear-router` baixa o JSON publicado de cada bot direto dos buckets do Builder (`blip_portal:builder_published_flow`, `…_global_actions`, `…_subflows`), monta o arquivo no formato do export do Studio e grava em `prd/fluxos/` via safe-save. Depois levanta a topologia pelos redirects e associa cada bot ao Figma pela coincidência de textos.
+
+**Por quê:** exportar bot por bot no portal é lento e sujeito a erro (pegar o bot errado, versão não publicada). Lendo da API, `prd/` fica igual ao publicado e o mapeamento vira um procedimento repetível em todo projeto. O JSON é sempre gravado por script, nunca reescrito pelo modelo, porque um fluxo tem centenas de KB e uma cópia feita pela IA pode sair truncada ou alterada sem aviso. Cada key só lê o próprio bot, então o ambiente tem uma `key_<identificador>` por bot.
 
 ---
 
@@ -75,3 +80,4 @@ Registro das decisões que deram forma a este kit (outubro/2026). Cada seção d
 | `blip-testes` | nova (substitui os geradores de PDF por dia) | — |
 | `blip-consultar` | nova | — |
 | `blip-collection` | nova | — |
+| `blip-mapear-router` | nova | — |

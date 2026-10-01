@@ -59,7 +59,7 @@ blip-sdd/
 ├── .agents/
 │   ├── rules/
 │   │   ├── constituicao-blip.md      P-001…P-014: regras inegociáveis do JSON
-│   │   └── governanca-projeto.md     prd/dev, histórico, segredos, confirmação de escrita
+│   │   └── governanca-projeto.md     prd/dev, histórico, segredos, Blip somente leitura
 │   └── skills/
 │       ├── blip-spec-driven/         SDD completo + engenharia reversa
 │       │   └── scripts/              blip-audit.mjs, blip-safe-save.mjs
@@ -69,6 +69,8 @@ blip-sdd/
 │       │   └── references/           playbook de erros comuns
 │       ├── blip-relatorio-diario/    relatório do dia para o ClickUp
 │       ├── blip-novo-projeto/        cria a pasta de um cliente
+│       ├── blip-mapear-router/       baixa os fluxos publicados e mapeia router × Figma
+│       │   └── scripts/              blip-router.mjs
 │       ├── blip-promover/            atualiza prd/ depois de publicar
 │       ├── blip-testes/              checklists, relatórios e PDF
 │       │   └── scripts/              gerar-pdf.mjs
@@ -162,10 +164,10 @@ O `.gitignore` **não** bloqueia segredo escrito dentro de um arquivo permitido 
 #### `governanca-projeto.md`
 **Propósito:** reúne as regras de **organização e segurança** do workspace:
 1. como descobrir em qual cliente (contrato) você está trabalhando, e que `CONTRATO/` é só o modelo;
-2. quem pode alterar `prd/` (só o `blip-promover`) e `dev/` (só via safe-save);
+2. quem pode alterar `prd/` (só o `blip-mapear-router` e o `blip-promover`) e `dev/` (só via safe-save);
 3. o registro obrigatório em `spec/historico/AAAA-MM-DD.md` depois de qualquer mudança;
 4. onde ficam os segredos e o que fazer se encontrar um fora do lugar;
-5. quais chamadas de API precisam da sua confirmação antes de rodar;
+5. que a Blip é **somente leitura** para o agente (ele nunca envia, publica ou altera nada lá) e quais chamadas a APIs do cliente precisam da sua confirmação;
 6. as convenções de nomes de arquivo.
 
 ### 4.2 `.agents/skills/`
@@ -246,6 +248,26 @@ Cada skill é uma pasta com um `SKILL.md`. O topo do arquivo (entre `---`) tem `
 
 **Também:** roda a checagem de segredos no material importado e, se o projeto já existir, oferece a engenharia reversa.
 
+#### `blip-mapear-router/` — mapa do router a partir da Blip
+**Propósito:** montar o retrato de um router que já está em produção sem você exportar nada à mão. Só lê da Blip.
+
+**Quando entra:** "lista os bots do router", "baixa os fluxos de produção", "atualiza o prd pela API", "mapeia o router", "qual bot é qual Figma?".
+
+**Como trabalha:**
+1. confere o ambiente: a key do roteador em `Authorization` e uma `key_<identificador>` por bot;
+2. descobre os bots (nome de cada key e se tem fluxo do Builder) e pede o print da tela de serviços do roteador quando a API não traz essa lista;
+3. baixa o JSON **publicado** de cada bot para `prd/fluxos/<identificador>.json`, no formato do export do Studio, com backup da versão anterior;
+4. levanta a topologia (quem redireciona para qual serviço) e aponta bots que faltam;
+5. descreve cada bot (modo engenharia reversa do `blip-spec-driven`);
+6. associa cada bot a um frame do Figma pela coincidência de textos (Alta / Parcial / Sem correspondência);
+7. escreve o mapa e as pendências na `ESPECIFICACAO.md`.
+
+**`scripts/blip-router.mjs`** (só commands `get`):
+- `descobrir`: identifica o bot de cada key e se ele tem fluxo do Builder;
+- `buckets`: lista os documentos guardados de um bot;
+- `baixar`: baixa fluxo + ações globais + subflows publicados e grava em `prd/fluxos/` via safe-save; para se a versão publicada não existir ou se blocos sumiram (você decide);
+- `topologia`: lê os JSONs de `prd/fluxos/` e gera tabela + Mermaid dos redirecionamentos entre serviços.
+
 #### `blip-promover/` — depois de publicar
 **Propósito:** manter `prd/` igual ao que está publicado. A skill:
 - traz o JSON publicado para `prd/`, com backup da versão anterior;
@@ -267,9 +289,10 @@ Cada skill é uma pasta com um `SKILL.md`. O topo do arquivo (entre `---`) tem `
 **Quando entra:** "quantos tickets na fila Hotline?", "quem tá online?", "em que bloco o usuário parou?", "lista os templates".
 
 **`scripts/blip-request.mjs`:**
-- lista as requests de uma collection, marcando `[L]` leitura e `[E]` escrita;
+- lista as requests de uma collection, marcando `[L]` leitura, `[X]` escrita na Blip e `[E]` escrita em API do cliente;
 - executa uma request com o ambiente do projeto;
-- recusa escrita sem `--confirmar`;
+- recusa **qualquer** escrita na Blip (inclusive commands que publicam ou depreciam flows), mesmo com `--confirmar`;
+- em API do cliente, só executa escrita com `--confirmar`;
 - nunca imprime chave.
 
 #### `blip-collection/` — collections de API
@@ -303,12 +326,12 @@ Os arquivos `.gitkeep` existem só para o git guardar as pastas vazias.
 
 | Item | Conteúdo |
 |---|---|
-| `fluxos/` | JSON exportado de cada bot de produção (ex.: `roteadorprd.json`). |
+| `fluxos/` | JSON publicado de cada bot de produção, baixado pelo `blip-mapear-router` ou exportado do Studio (ex.: `ecovitacaptacaodev.json`). |
 | `whatsapp-flows/` | JSON das telas dos WhatsApp Flows publicados. |
 | `RECURSOS.md` | Tabela com bots, recursos do Builder, configurações, APIs e filas do Desk de produção. Tem **nomes e URLs**; um valor secreto aparece só pelo nome da variável. |
 | `_backups/` *(criada automaticamente)* | Versões anteriores, guardadas pelo `blip-promover`. |
 
-**Quem altera:** só a skill `blip-promover`, depois que você confirma que publicou.
+**Quem altera:** só as skills `blip-mapear-router` (baixa a versão publicada) e `blip-promover` (depois que você confirma que publicou).
 
 ### `dev/` — desenvolvimento
 **Propósito:** guardar só os bots que estão sendo alterados **agora**. Se um bot não está em `dev/`, ninguém está mexendo nele.
@@ -325,14 +348,14 @@ Os arquivos `.gitkeep` existem só para o git guardar as pastas vazias.
 ### `collections/` — APIs do projeto
 **Propósito:** guardar as collections Postman deste cliente (commands da Blip que o projeto usa e APIs do cliente), criadas pela skill `blip-collection`. As collections só contêm `{{variáveis}}`.
 
-`ambientes/exemplo.postman_environment.json` lista todas as variáveis, com valores vazios ou `PREENCHER`. Copie para `prd.postman_environment.json` e `dev.postman_environment.json` e preencha com as chaves reais. **Só o exemplo vai para o git.**
+`ambientes/exemplo.postman_environment.json` lista todas as variáveis, com valores vazios ou `PREENCHER`: `blip_url`, `Authorization` (key do **roteador**) e uma `key_<identificador>` para **cada bot** do router (cada key só lê o próprio bot). Copie para `prd.postman_environment.json` e `dev.postman_environment.json` e preencha com as chaves reais. **Só o exemplo vai para o git.**
 
 ### `spec/` — tudo que explica o projeto
 
 | Item | Propósito |
 |---|---|
 | `CONTEXTO.md` | Lado de **negócio**: cliente, objetivo, pessoas, canais, horário, regras de negócio e perguntas em aberto. |
-| `ESPECIFICACAO.md` | Lado **técnico** do que existe **hoje**: topologia, o que cada bot faz, integrações e pontos de atenção. É gerada por engenharia reversa e atualizada a cada publicação. |
+| `ESPECIFICACAO.md` | Lado **técnico** do que existe **hoje**: mapa do router (serviço × bot × arquivo × frame do Figma), topologia, o que cada bot faz, integrações, pontos de atenção e pendências. É gerada pelo `blip-mapear-router` e atualizada a cada publicação. |
 | `DECISOES.md` | ADRs: cada decisão estrutural numerada, com contexto, decisão e consequência. Nenhuma é apagada; uma decisão nova substitui a antiga. |
 | `figma/` | Frames exportados do Figma (PNG para a IA ler; SVG, se quiser). |
 | `features/<feature>/` | Uma pasta por mudança, com `spec.md` (o que muda e os critérios de aceite), `design.md` (como vai ser construído) e `tasks.md` (tarefas atômicas com status). |
@@ -384,6 +407,7 @@ Os arquivos `.gitkeep` existem só para o git guardar as pastas vazias.
 | Você diz | O que acontece |
 |---|---|
 | "cria o projeto da Acme" | `blip-novo-projeto` copia `CONTRATO/` para `Acme/` |
+| "lista os bots do router de produção, baixa os fluxos e mapeia com o Figma" | `blip-mapear-router` baixa cada bot para `prd/fluxos/` e escreve o mapa na `ESPECIFICACAO.md` |
 | "coloquei os fluxos de produção, especifica esse router" | `blip-spec-driven` faz engenharia reversa e escreve `ESPECIFICACAO.md` |
 | "muda o menu da captação pra ter a opção X" | `blip-spec-driven`: spec → design → tasks → JSON em `dev/` com safe-save |
 | "o bot não pediu o CNPJ, olha esse print" | `blip-troubleshooter` investiga, corrige em `dev/` e registra |
@@ -397,7 +421,7 @@ Os arquivos `.gitkeep` existem só para o git guardar as pastas vazias.
 
 ## 10. Ciclo de vida de uma alteração
 
-1. **Importar** os JSONs de produção para `prd/` (`blip-novo-projeto`).
+1. **Importar** os JSONs de produção para `prd/` (`blip-mapear-router` baixa pela API; ou export manual organizado pelo `blip-novo-projeto`).
 2. **Inventário + especificação** da mudança em `spec/features/<feature>/spec.md` (`blip-spec-driven`).
 3. **Design e tarefas** (`design.md`, `tasks.md`), com a sua aprovação.
 4. **Gerar o fluxo em `dev/`**, com safe-save e auditoria.
@@ -419,7 +443,10 @@ Todos rodam com Node 18+ e não têm dependências npm. Rode a partir da raiz do
 | `node .agents/skills/blip-spec-driven/scripts/blip-audit.mjs <fluxo.json>` | Auditoria mecânica do JSON |
 | `node .agents/skills/blip-spec-driven/scripts/blip-safe-save.mjs <alvo> <novo> [--allow-delete ids]` | Gravação com backup, trava de deleção, auditoria e rollback |
 | `node .agents/skills/blip-consultar/scripts/blip-request.mjs <collection> --listar [--buscar termo]` | Lista as requests de uma collection |
-| `node .agents/skills/blip-consultar/scripts/blip-request.mjs <collection> "<request>" --ambiente <env> [--var k=v] [--confirmar]` | Executa uma request |
+| `node .agents/skills/blip-consultar/scripts/blip-request.mjs <collection> "<request>" --ambiente <env> [--var k=v] [--confirmar]` | Executa uma request (escrita na Blip sempre recusada; `--confirmar` só vale para API do cliente) |
+| `node .agents/skills/blip-mapear-router/scripts/blip-router.mjs descobrir --ambiente <env>` | Identifica o bot de cada key do ambiente |
+| `node .agents/skills/blip-mapear-router/scripts/blip-router.mjs baixar --ambiente <env> --contrato <pasta> [--chave key_<bot>]` | Baixa os fluxos publicados para `prd/fluxos/` |
+| `node .agents/skills/blip-mapear-router/scripts/blip-router.mjs topologia --contrato <pasta>` | Tabela + Mermaid dos redirecionamentos |
 | `node .agents/skills/blip-testes/scripts/gerar-pdf.mjs <arquivo.md> [saida.pdf]` | Markdown → PDF |
 | `node .githooks/checar-segredos.mjs --todos` | Varre o workspace atrás de segredos |
 
@@ -433,7 +460,7 @@ Este repositório guarda só o kit. O workspace (kit + clientes) vai para um rep
 2. **Hook `pre-commit`**: bloqueia o commit se houver chave, token ou senha escrita em qualquer arquivo, inclusive dentro do JSON exportado do Studio.
 3. **Constituição P-014 + `blip-audit.mjs`**: fluxo com credencial escrita em header HTTP reprova; a chave vai para `{{resource.x}}` ou `{{config.x}}` no Studio.
 
-Além disso, toda chamada que altera algo na plataforma (set, delete, envio de mensagem, publicar flow, mudar ticket) só roda com a sua confirmação explícita.
+Além disso, **a Blip é somente leitura para o agente**: ele consulta, mas nunca envia, publica, altera ou apaga nada lá, nem se você pedir. Os scripts reforçam isso (`blip-request.mjs` recusa escrita na Blip; `blip-router.mjs` só tem leitura). Publicar e alterar é sempre manual. Em APIs do cliente, escrita só roda com a sua confirmação.
 
 ---
 

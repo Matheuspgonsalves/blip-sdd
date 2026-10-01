@@ -14,10 +14,10 @@ Este workspace organiza projetos de chatbot na plataforma **Blip (Take Blip)** c
 │   ├── contrato/             ← esqueleto copiado ao criar um contrato novo
 │   ├── feature/              ← modelos de spec.md, design.md, tasks.md
 │   ├── collections/          ← collections de referência (Blip geral, WA Flows)
-│   ├── blocos-padrao/        ← blocos padrão da empresa (local, fora do git)
+│   ├── blocos-padrao/        ← blocos padrão da empresa
 │   └── *.md                  ← modelos de histórico, checklist, relatório de testes
 ├── docs/                     ← arquitetura deste kit
-└── <CONTRATO>/               ← um por cliente/projeto (fora do git)
+└── <CONTRATO>/               ← um por cliente/projeto (versionado; segredos ficam fora)
     ├── prd/                  ← espelho do que está publicado
     │   ├── fluxos/  whatsapp-flows/  RECURSOS.md
     ├── dev/                  ← só o que está sendo alterado

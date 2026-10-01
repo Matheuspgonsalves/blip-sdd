@@ -1,25 +1,19 @@
-# Este repositório versiona só o KIT (agentes, regras, templates, docs).
-# As pastas de contrato (clientes) ficam no mesmo workspace, mas fora do git.
-# Estratégia de lista permitida: tudo na raiz é ignorado, exceto o que está liberado abaixo.
+# Repositório privado: versiona o kit E os contratos (clientes).
+# O que NUNCA entra: segredos (ambientes), backups automáticos e rascunhos.
+# Além deste arquivo, o hook .githooks/pre-commit bloqueia commits com chave/token
+# escrito dentro de qualquer arquivo (ative com: git config core.hooksPath .githooks).
 
-/*
-!/.gitignore
-!/README.md
-!/AGENTS.md
-!/.agents/
-!/_templates/
-!/docs/
+# Segredos: só o exemplo vai para o git
+**/collections/ambientes/*
+!**/collections/ambientes/exemplo.postman_environment.json
 
-# Blocos padrão da empresa: material interno, fica só na máquina local
-/_templates/blocos-padrao/*
-!/_templates/blocos-padrao/README.md
+# Backups do safe-save (o histórico do git já cumpre esse papel) e rascunhos
+**/_backups/
+**/_scratch/
 
-# Ambientes com segredos, se algum dia forem parar dentro de _templates
-**/ambientes/*.postman_environment.json
-!**/ambientes/exemplo.postman_environment.json
-
-# Lixo comum
+# Temporários
+*.tmp.html
+node_modules/
 .DS_Store
 Thumbs.db
-node_modules/
-*.tmp.html
+desktop.ini

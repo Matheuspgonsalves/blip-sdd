@@ -1,0 +1,9 @@
+#!/bin/sh
+# Bloqueia commits que contenham chaves, tokens ou senhas escritos em arquivos.
+# Ativação (uma vez por clone): git config core.hooksPath .githooks
+ROOT="$(git rev-parse --show-toplevel)"
+if ! command -v node >/dev/null 2>&1; then
+  echo "pre-commit: Node.js não encontrado; a checagem de segredos não pôde rodar. Instale o Node 18+ ou use git commit --no-verify por sua conta e risco."
+  exit 1
+fi
+exec node "$ROOT/.githooks/checar-segredos.mjs" --staged

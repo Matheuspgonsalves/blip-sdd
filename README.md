@@ -27,12 +27,12 @@ blip-sdd/
 │   ├── contrato/             ← esqueleto de um cliente novo
 │   ├── feature/              ← spec.md, design.md, tasks.md
 │   ├── collections/          ← collections de referência (Blip geral, WhatsApp Flows)
-│   ├── blocos-padrao/        ← blocos padrão da empresa (só local, fora do git)
+│   ├── blocos-padrao/        ← blocos padrão da empresa
 │   └── *.md                  ← histórico do dia, checklist, relatório de testes
 └── docs/                     ← arquitetura e decisões deste kit
 ```
 
-Cada **contrato** (cliente) criado dentro do workspace fica assim, e **não vai para o git**:
+Cada **contrato** (cliente) criado dentro do workspace fica assim e também é versionado (repositório privado), menos os segredos:
 
 ```
 Acme/
@@ -45,9 +45,10 @@ Acme/
 
 ## Como usar
 
-1. Clone este repositório e abra a pasta no Antigravity.
-2. Coloque os blocos padrão da empresa em `_templates/blocos-padrao/` (ficam só na sua máquina).
-3. Converse normalmente; o agente escolhe a skill pela intenção:
+1. Copie (ou clone) este kit para a raiz da sua pasta de contratos — ela vira o workspace — e abra essa pasta no Antigravity. Versione o workspace num repositório **privado**; este repositório aqui guarda só o kit.
+2. Ative a checagem de segredos (uma vez por clone): `git config core.hooksPath .githooks`.
+3. Coloque os blocos padrão da empresa em `_templates/blocos-padrao/`.
+4. Converse normalmente; o agente escolhe a skill pela intenção:
 
 | Você diz | O que acontece |
 |---|---|
@@ -74,8 +75,12 @@ Todos rodam com Node 18+ e não têm dependências npm.
 
 ## Segurança
 
-- O `.gitignore` funciona como **lista permitida**: só `AGENTS.md`, `.agents/`, `_templates/` e `docs/` entram no repositório. Pastas de cliente, ambientes com chaves e os blocos da empresa ficam fora automaticamente.
-- Chaves e tokens só existem em `<CONTRATO>/collections/ambientes/*.postman_environment.json`.
-- Toda chamada que altera algo na plataforma (set, delete, envio de mensagem, publicar flow) exige confirmação explícita.
+Este repositório guarda só o kit. O workspace onde você trabalha (kit + pastas de contrato) vai para um repositório **privado**, e três camadas evitam que segredo vá junto:
+
+1. **`.gitignore`**: `collections/ambientes/` (chaves e tokens), `_backups/` e `_scratch/` nunca entram.
+2. **Hook `pre-commit`** (`.githooks/checar-segredos.mjs`): bloqueia o commit se encontrar chave Blip (`Key …`), `Bearer`, JWT, chave privada ou campo de senha/token preenchido em qualquer arquivo, inclusive dentro do JSON exportado do Studio. Antes do primeiro commit, rode `node .githooks/checar-segredos.mjs --todos`.
+3. **Constituição P-014 + `blip-audit.mjs`**: fluxo com credencial escrita em header HTTP reprova na auditoria; a chave vai para `{{resource.x}}`/`{{config.x}}` no Studio.
+
+Toda chamada que altera algo na plataforma (set, delete, envio de mensagem, publicar flow) exige confirmação explícita.
 
 Detalhes das decisões de arquitetura em [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md). O diagrama editável está em `docs/estrutura-projeto-blip.excalidraw` (abre no excalidraw.com ou no plugin Excalidraw do Obsidian).

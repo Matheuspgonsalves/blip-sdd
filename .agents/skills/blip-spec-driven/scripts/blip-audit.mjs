@@ -137,6 +137,18 @@ function auditFlow(filePath) {
     ];
 
     allActions.forEach(act => {
+      // P-014: nenhuma chave/token literal em headers de requisição HTTP
+      if (act.type === 'ProcessHttp' && act.settings && act.settings.headers) {
+        const headers = act.settings.headers;
+        const headerNames = Object.keys(headers);
+        for (let h = 0; h < headerNames.length; h++) {
+          const value = String(headers[headerNames[h]] || '');
+          if (/(Key|Bearer)\s+[A-Za-z0-9+/._-]{20,}/.test(value) || /eyJ[A-Za-z0-9_=-]{10,}\./.test(value)) {
+            errors.push(`P-014: ação HTTP "${act.$title || act.type}" no bloco "${title}" (${id}) tem credencial escrita no header "${headerNames[h]}". Use {{resource.<nome>}} ou {{config.<nome>}}.`);
+          }
+        }
+      }
+
       if (act.type === 'ExecuteScript' || act.type === 'ExecuteScriptV2') {
         const actTitle = act.$title || act.type;
         const inputVars = act.settings && act.settings.inputVariables;

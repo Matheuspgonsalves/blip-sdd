@@ -42,7 +42,7 @@ Registro das decisões que deram forma a este kit (outubro/2026). Cada seção d
 **Por quê:** a IA consegue marcar um teste como concluído num markdown; num PDF, não. Antes, o conteúdo dos relatórios ficava escrito dentro de scripts geradores, que eram copiados a cada dia (`generate-tests-pdf-2809.cjs`, `-2909`, `-3009`…). Agora existe um gerador só, e o conteúdo fica versionado no markdown.
 
 ## 8. Collections por projeto, segredos fora delas
-**Decisão:** cada contrato tem suas collections em `collections/`, geradas pela IA conforme a necessidade. Valores de chaves e tokens ficam só em `collections/ambientes/*.postman_environment.json`, fora do git. As collections gerais (Blip, WhatsApp Flows) ficam em `_templates/collections/` como referência.
+**Decisão:** cada contrato tem suas collections em `collections/`, geradas pela IA conforme a necessidade. Valores de chaves e tokens ficam só em `collections/ambientes/*.postman_environment.json`, ignorada pelo git. As collections gerais (Blip, WhatsApp Flows) ficam em `_templates/collections/` como referência.
 
 **Por quê:** cada projeto precisa de um recorte diferente da API (e das APIs do cliente), então não há uma collection padrão única. Collections exportadas do Postman costumam carregar chaves dentro do array `variable`; separar o ambiente evita que uma chave vá parar num repositório ou num print.
 
@@ -55,6 +55,11 @@ Registro das decisões que deram forma a este kit (outubro/2026). Cada seção d
 **Decisão:** `blip-safe-save.mjs` encontra sozinho a pasta de ambiente (`dev/` ou `prd/`) do arquivo alvo, faz backup em `<ambiente>/_backups/`, bloqueia deleção de blocos não autorizada, roda a auditoria e faz rollback. Gravar em `prd/` exige `--permitir-prd`.
 
 **Por quê:** a versão anterior tinha caminhos fixos do projeto em que nasceu (pasta `.spec` daquele projeto e um arquivo-espelho específico) e só funcionava rodando da raiz daquele workspace.
+
+## 11. Repositório privado com os contratos, sem segredos
+**Decisão:** o repositório (privado) versiona o kit **e** as pastas de contrato. Ficam de fora só `collections/ambientes/`, `_backups/` e `_scratch/`. Um hook `pre-commit` bloqueia qualquer arquivo com chave, token ou senha escrita, e a regra P-014 proíbe credencial literal nos fluxos.
+
+**Por quê:** ter o histórico dos contratos no git é útil (diffs de fluxo, acesso de qualquer máquina). Mas repositório privado protege o acesso, não o conteúdo: um segredo commitado fica no histórico para sempre, aparece para qualquer pessoa adicionada ao repositório e precisa ser rotacionado se vazar. Nos projetos analisados havia chaves de roteador escritas em headers de ações HTTP de fluxos de produção e em collections — exatamente o que o hook e a P-014 barram.
 
 ---
 

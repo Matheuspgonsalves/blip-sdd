@@ -41,10 +41,12 @@ Se o usuário anexou ou apontou arquivos:
 
 Nunca copie o valor de uma chave para `RECURSOS.md`.
 
+Depois de organizar, rode `node .githooks/checar-segredos.mjs --todos` e mostre ao usuário o que foi encontrado (fluxos exportados e collections antigas costumam ter chaves escritas). Nada disso pode ser commitado até ser trocado por referência.
+
 ## 4. Primeiro registro
 - Crie `spec/historico/<hoje>.md` com a entrada "Projeto criado" e a lista do que foi organizado.
 - Se o projeto é **existente** e há JSONs em `prd/fluxos/`, ofereça rodar o **Modo Engenharia Reversa** da skill `blip-spec-driven` para gerar a `ESPECIFICACAO.md`.
 - Se é **novo**, ofereça começar o `CONTEXTO.md` em conversa (objetivo, público, canais, topologia esperada).
 
 ## 5. Lembrete de ambiente
-Diga ao usuário, em uma linha, que as chaves vão em `collections/ambientes/prd.postman_environment.json` e `dev.postman_environment.json` (copiando o `exemplo`), e que essa pasta fica fora do git.
+Diga ao usuário, em uma linha, que as chaves vão em `collections/ambientes/prd.postman_environment.json` e `dev.postman_environment.json` (copiando o `exemplo`), e que essa pasta é ignorada pelo git (o resto do contrato é versionado no repositório privado).

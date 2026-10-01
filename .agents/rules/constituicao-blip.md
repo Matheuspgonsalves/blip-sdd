@@ -5,7 +5,7 @@ description: Princípios inegociáveis para qualquer JSON de fluxo Blip gerado o
 
 # Constituição dos Fluxos Blip
 
-> **Versão:** 2.0.0 (consolidada a partir dos projetos anteriores)
+> **Versão:** 2.1.0 (consolidada a partir dos projetos anteriores)
 > **Escopo:** todo fluxo do Blip Builder / Studio criado, editado ou corrigido neste workspace, por qualquer skill.
 > **Exceções por cliente:** se um contrato precisar quebrar um princípio, a exceção é registrada como ADR em `<CONTRATO>/spec/DECISOES.md`, com o motivo. Sem ADR, o princípio vale.
 
@@ -73,3 +73,9 @@ Nenhum agente sobrescreve um JSON de fluxo sem o protocolo de `blip-safe-save.mj
 
 ### P-013 [DEVE] — `onboarding` sempre espera entrada (Cód. 64)
 O bloco raiz (`onboarding`, `root: true`) tem ação de entrada com `"bypass": false`, salva em `inputInicial` com a tag preta `UserInput` (`{"label":"UserInput","background":"#000000"}`). Com `bypass: true` o Blip recusa a publicação com: *Cód. 64 — The root state must expect an input*.
+
+### P-014 [DEVE] — Nenhuma credencial escrita no fluxo
+Headers de ações HTTP, scripts e conteúdos não podem conter chave Blip (`Key …`), token `Bearer`, JWT ou senha literal. Use `{{resource.<nome>}}` (recursos do bot) ou `{{config.<nome>}}`, cadastrados no Studio; o nome do recurso vai para `RECURSOS.md` e o valor para `collections/ambientes/`.
+
+*Motivação:* o JSON exportado do Studio vai para o repositório. Com a chave em recurso, o export não carrega segredo e a troca da chave não exige mexer no fluxo.
+

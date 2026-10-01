@@ -23,6 +23,8 @@ Bots de dev e de prd são bots diferentes no Blip. Antes de copiar, compare o JS
 
 Se encontrar valor de dev indo para prd, **pare e pergunte**.
 
+Procure também credencial escrita no JSON (header `Authorization: Key …` em ação HTTP, token em script): rode `node .githooks/checar-segredos.mjs --todos` depois de gravar. Se aparecer, o commit vai ser bloqueado; oriente o usuário a trocar a chave por `{{resource.<nome>}}` no Studio, publicar e exportar de novo (P-014).
+
 ## 3. Gravar em prd/
 Use o safe-save com permissão de prd (a auditoria é opcional aqui, porque prd espelha o que existe, inclusive legado):
 ```bash
